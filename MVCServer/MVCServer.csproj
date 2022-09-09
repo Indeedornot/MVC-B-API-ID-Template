@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!--Library IdentityServer-->
+        <PackageReference Include="IdentityServer4" Version="4.1.2"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0"/>
+
+        <!--LIBRARY BWASM-->
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.8"/>
+    </ItemGroup>
+
+    <!--LIBRARY BWASM-->
+    <ItemGroup>
+        <ProjectReference Include="..\BWASM\BWASM.csproj"/>
+    </ItemGroup>
+</Project>
