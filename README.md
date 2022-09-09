@@ -35,7 +35,9 @@ An Asp.Net Core 6.0 Template made for small projects that do not need to be base
   - Possible usage of [AutoMapper](https://docs.automapper.org/en/stable/Getting-started.html) with Profile based configuration for ease of use
 - [ ] Typesafe Rest Api Client Library
   - Possible usage of [Restless](https://github.com/letsar/RestLess, "Compilation Time Generated Rest Api Client Library") 
-- [ ] Check for libraries implementing Repository<Type id, Type model> for ease of use of DbContext
+- [x] ~~Check for libraries implementing Repository<Type id, Type model> for ease of use of DbContext~~
+  - Not needed due to EFCore implementing Repository pattern - Use Generic Crud methods on DbContext
+- [ ] Look into EFCore DbConnection type for ease of use of DbContext and the ability to implement UnitOfWork pattern
 - [ ] Add easy database manipulation for WebApi databases for testing purposes
   - Possible usage of [Core-Admin](https://github.com/edandersen/core-admin) Automatic Crud Generation
     - Need to previously either establish role-based authorization or use `app.Environment.IsDevelopment();`
