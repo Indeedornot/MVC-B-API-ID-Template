@@ -8,15 +8,27 @@
 
     <ItemGroup>
         <!--Library IdentityServer-->
-        <PackageReference Include="IdentityServer4" Version="4.1.2"/>
-        <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0"/>
+        <PackageReference Include="IdentityModel" Version="4.4.0" />
+        <PackageReference Include="IdentityServer4" Version="4.1.2" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
 
         <!--LIBRARY BWASM-->
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.8"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.8" />
     </ItemGroup>
 
     <!--LIBRARY BWASM-->
     <ItemGroup>
-        <ProjectReference Include="..\BWASM\BWASM.csproj"/>
+        <ProjectReference Include="..\BWASM\BWASM.csproj" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <Content Include="..\README.md">
+        <Link>README.md</Link>
+      </Content>
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Middleware" />
+    </ItemGroup>
+    
+    <Import Project="..\SharedProject\SharedProject.projitems" Label="Shared" />
 </Project>

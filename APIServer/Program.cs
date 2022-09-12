@@ -3,7 +3,10 @@ using APIServer.Database;
 using APIServer.Logging.Database;
 using APIServer.Logging.Middleware;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,22 +14,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-string projectLoc = builder.Environment.ContentRootPath;
-
-builder.Services.AddDbContext<AppDbContext>(
-  options => {
-    string databasePath = projectLoc + @"\Database\Database.db";
-    options.UseSqlite($"Data Source={databasePath};");
-  }
-);
+builder.Services.AddDbContext<AppDbContext>();
 
 //LIBRARY Logger
-builder.Services.AddDbContext<LogDbContext>(
-  options => {
-    string databasePath = projectLoc + @"\Logging\Database\LogDatabase.db";
-    options.UseSqlite($"Data Source={databasePath};");
-  }
-);
+builder.Services.AddDbContext<LogDbContext>();
+
+// var context = new LogDbContext(
+//   new DbContextOptionsBuilder<LogDbContext>().UseSqlite($"Data Source={databasePath};").Options
+// );
+// context.Database.EnsureDeleted();
+// context.Database.Migrate();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -63,7 +60,8 @@ builder.Services.AddAuthentication("Bearer")
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment()){
+if (app.Environment.IsDevelopment())
+{
   app.UseSwagger();
   app.UseSwaggerUI();
 }

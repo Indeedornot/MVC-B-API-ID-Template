@@ -1,10 +1,25 @@
 ﻿@using BWASM.Pages
+
+@using IdentityModel.Client
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.Extensions.Localization
+@using MVCServer.Localization
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+
 @{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
+    <h1 class="display-4">@SharedLocalizer["Hello"] @GetUsername()</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <component type="typeof(Counter)" render-mode="WebAssemblyPrerendered"/>
+    <component type="typeof(Counter)" render-mode="WebAssemblyPrerendered" />
 </div>
+
+@{
+    string GetUsername()
+    {
+        string? username = ViewData["Username"]!.ToString();
+        return !string.IsNullOrEmpty(username) ? username : "New User";
+    }
+}
