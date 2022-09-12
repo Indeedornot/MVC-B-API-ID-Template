@@ -1,0 +1,66 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com//fwlink//linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run Api",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}\\APIServer\\bin\\Debug\\net6.0\\APIServer.dll",
+            "launchSettingsFilePath": "${cwd}\\APIServer\\Properties\\launchSettings.json",
+            "launchSettingsProfile": "APIServer",
+            "requireExactSource": false,
+            "preLaunchTask": "build",
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s/swagger"
+            }
+        },
+        {
+            "name": "Run BWASM",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}\\BWASM\\bin\\Debug\\net6.0\\BWASM.dll",
+            "launchSettingsFilePath": "${cwd}\\BWASM\\Properties\\launchSettings.json",
+            "launchSettingsProfile": "BWASM",
+            "requireExactSource": false,
+            "preLaunchTask": "build",
+        },
+        {
+            "name": "Run ID4",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder\\IDServer\\bin\\Debug\\net6.0\\IDServer.dll",
+            "launchSettingsFilePath": "${cwd}\\IDServer\\Properties\\launchSettings.json",
+            "launchSettingsProfile": "IDServer",
+            "requireExactSource": false,
+            "preLaunchTask": "build",
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            }
+        },
+        {
+            "name": "Run MVC",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}\\MVCServer\\bin\\Debug\\net6.0\\MVCServer.dll",
+            "launchSettingsFilePath": "${cwd}\\MVCServer\\Properties\\launchSettings.json",
+            "launchSettingsProfile": "MVCServer",
+            "requireExactSource": false,
+            "preLaunchTask": "build",
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            }
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach"
+        }
+    ]
+}
