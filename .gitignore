@@ -658,3 +658,4 @@ $RECYCLE.BIN/
 
 /APIServer/Logging/Database/Migrations
 /APIServer/Logging/Database/LogDatabase.sqlite
+tempkey.jwk

@@ -1,9 +1,7 @@
 ﻿@using BWASM.Pages
-
-@using IdentityModel.Client
-@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using SharedProject.Localization
 @using Microsoft.Extensions.Localization
-@using MVCServer.Localization
+
 @inject IStringLocalizer<SharedResource> SharedLocalizer
 
 @{
@@ -19,7 +17,9 @@
 @{
     string GetUsername()
     {
-        string? username = ViewData["Username"]!.ToString();
-        return !string.IsNullOrEmpty(username) ? username : "New User";
+        if (!ViewData.ContainsKey("Username")) { return "Anonymous"; }
+        var username = ViewData["Username"]!.ToString();
+        if (string.IsNullOrEmpty(username)) return "New User";
+        return username;
     }
 }

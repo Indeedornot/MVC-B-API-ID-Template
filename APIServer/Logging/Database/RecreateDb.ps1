@@ -1,11 +1,23 @@
-#dotnet ef database update 0 --connection "Data Source=$(Get-Location)\LogDatabase.sqlite" --context LogDbContext
-Set-Location (get-item $PSScriptRoot).Parent.Parent.FullName
-dotnet ef database drop --context LogDbContext
-dotnet ef migrations remove --context LogDbContext 
-$dbPath = Join-Path $PSScriptRoot \LogDatabase.sqlite
+$context = "LogDbContext"
+
+$dbName = "LogDatabase.sqlite"
+$dbPath = Join-Path $PSScriptRoot $dbName
 $dbExists = Test-Path -Path $dbPath -PathType Leaf
-if ($($dbExists)) {
-    (Get-ChildItem $($dbPath)).Delete()
+
+$migrationFName = "Migrations"
+$migrationPath = Join-Path $PSScriptRoot $migrationFName
+$migrationExists = Test-Path -Path $migrationPath -PathType Container
+
+# dotnet ef database drop --context LogDbContext
+# Write-Output Y
+
+if ($migrationExists) {
+    dotnet ef migrations remove --context $context 
 }
-dotnet ef migrations add Initial -o ./Logging/Database/Migrations --context LogDbContext
-dotnet ef database update --connection "Data Source=$($PSScriptRoot)\LogDatabase.sqlite" --context LogDbContext
+
+if ($dbExists) {
+    (Get-ChildItem $dbPath).Delete()
+}
+
+dotnet ef migrations add Initial -o $migrationPath --context $context 
+dotnet ef database update --connection "Data Source=$PSScriptRoot\$dbName" --context $context 

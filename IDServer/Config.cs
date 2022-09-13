@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using IdentityServer4;
 using IdentityServer4.Models;
 
-namespace IDServer; 
+namespace IDServer;
 
 public static class Config {
   public static IEnumerable<IdentityResource> IdentityResources =>
@@ -25,7 +25,7 @@ public static class Config {
       // interactive client using code flow + pkce
       new() {
         ClientId = "MVCID",
-        ClientSecrets = {new Secret("MVCSecret")},
+        ClientSecrets = {new Secret("MVCSecret".Sha256() )},
 
         AllowedGrantTypes = GrantTypes.Code,
 
@@ -39,7 +39,6 @@ public static class Config {
           "MVCScope",
           IdentityServerConstants.StandardScopes.OpenId,
           IdentityServerConstants.StandardScopes.Profile,
-          IdentityServerConstants.StandardScopes.Email
         },
         RequirePkce = true,
         AllowPlainTextPkce = false

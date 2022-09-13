@@ -1,8 +1,8 @@
-﻿namespace MVCServer.Localization; 
+﻿namespace SharedProject.Localization;
 
 /// <summary>
 /// Dummy class to group shared resources
 /// </summary>
 public class SharedResource {
-  
-}
+
+  }

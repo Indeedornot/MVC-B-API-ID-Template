@@ -33,7 +33,7 @@
             "name": "Run ID4",
             "type": "coreclr",
             "request": "launch",
-            "program": "${workspaceFolder\\IDServer\\bin\\Debug\\net6.0\\IDServer.dll",
+            "program": "${workspaceFolder}\\IDServer\\bin\\Debug\\net6.0\\IDServer.dll",
             "launchSettingsFilePath": "${cwd}\\IDServer\\Properties\\launchSettings.json",
             "launchSettingsProfile": "IDServer",
             "requireExactSource": false,
