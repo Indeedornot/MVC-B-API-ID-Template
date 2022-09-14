@@ -5,11 +5,11 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Text.Json;
+using Duende.IdentityServer;
+using Duende.IdentityServer.Test;
 using IdentityModel;
-using IdentityServer4;
-using IdentityServer4.Test;
 
-namespace IDServer.Controllers; 
+namespace IDServer.Controllers;
 
 public class TestUsers {
   public static List<TestUser> Users {

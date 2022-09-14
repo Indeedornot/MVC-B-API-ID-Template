@@ -2,20 +2,20 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using IdentityServer4.Events;
-using IdentityServer4.Extensions;
-using IdentityServer4.Models;
-using IdentityServer4.Services;
-using IdentityServer4.Validation;
+using Duende.IdentityServer;
+using Duende.IdentityServer.Events;
+using Duende.IdentityServer.Extensions;
+using Duende.IdentityServer.Models;
+using Duende.IdentityServer.Services;
+using Duende.IdentityServer.Validation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace IDServer.Controllers.Consent; 
+namespace IDServer.Controllers.Consent;
 
 /// <summary>
 /// This controller processes the consent UI
@@ -23,8 +23,8 @@ namespace IDServer.Controllers.Consent;
 [SecurityHeaders]
 [Authorize]
 public class ConsentController : Controller {
-  private readonly IIdentityServerInteractionService _interaction;
   private readonly IEventService _events;
+  private readonly IIdentityServerInteractionService _interaction;
   private readonly ILogger<ConsentController> _logger;
 
   public ConsentController(
@@ -114,7 +114,7 @@ public class ConsentController : Controller {
         if (ConsentOptions.EnableOfflineAccess == false){
           scopes = scopes.Where(
             x =>
-              x != IdentityServer4.IdentityServerConstants.StandardScopes.OfflineAccess
+              x != IdentityServerConstants.StandardScopes.OfflineAccess
           );
         }
 
@@ -209,7 +209,7 @@ public class ConsentController : Controller {
     if (ConsentOptions.EnableOfflineAccess && request.ValidatedResources.Resources.OfflineAccess){
       apiScopes.Add(
         GetOfflineAccessScope(
-          vm.ScopesConsented.Contains(IdentityServer4.IdentityServerConstants.StandardScopes.OfflineAccess) ||
+          vm.ScopesConsented.Contains(IdentityServerConstants.StandardScopes.OfflineAccess) ||
           model == null
         )
       );
@@ -221,7 +221,7 @@ public class ConsentController : Controller {
   }
 
   private ScopeViewModel CreateScopeViewModel(IdentityResource identity, bool check)
-    => new ScopeViewModel {
+    => new() {
       Value = identity.Name,
       DisplayName = identity.DisplayName ?? identity.Name,
       Description = identity.Description,
@@ -247,8 +247,8 @@ public class ConsentController : Controller {
   }
 
   private ScopeViewModel GetOfflineAccessScope(bool check)
-    => new ScopeViewModel {
-      Value = IdentityServer4.IdentityServerConstants.StandardScopes.OfflineAccess,
+    => new() {
+      Value = IdentityServerConstants.StandardScopes.OfflineAccess,
       DisplayName = ConsentOptions.OfflineAccessDisplayName,
       Description = ConsentOptions.OfflineAccessDescription,
       Emphasize = true,

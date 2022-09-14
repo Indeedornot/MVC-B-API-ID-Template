@@ -1,29 +1,33 @@
-using IdentityServer4;
-
-using Microsoft.AspNetCore.Localization;
-using Microsoft.IdentityModel.Logging;
-using SharedProject.Localization;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
+using Duende.IdentityServer;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.IdentityModel.Logging;
+using MVCServer.Api;
+using Refit;
+using SharedProject.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 //LIBRARY LoC Service
+
 #region Localization
 builder.Services.AddLocalization();
-builder.Services.AddControllersWithViews().AddDataAnnotationsLocalization(options => {
-  options.DataAnnotationLocalizerProvider = (type, factory) =>
-    factory.Create(typeof(SharedResource));
-}); ;
+builder.Services.AddControllersWithViews().AddDataAnnotationsLocalization(
+  options => {
+    options.DataAnnotationLocalizerProvider = (type, factory) =>
+      factory.Create(typeof(SharedResource));
+  }
+);
 
 builder.Services.Configure<RequestLocalizationOptions>(
   options => {
     var supportedCultures = new List<CultureInfo> {
-      new("en-US"),
-      new("de-CH"),
-      new("fr-CH"),
-      new("it-CH")
+      new("en-US")
+      // new("de-CH"),
+      // new("fr-CH"),
+      // new("it-CH")
     };
 
     options.DefaultRequestCulture = new RequestCulture("en-US", "en-US");
@@ -31,7 +35,7 @@ builder.Services.Configure<RequestLocalizationOptions>(
     options.SupportedUICultures = supportedCultures;
     options.SetDefaultCulture("en-US");
 
-    options.RequestCultureProviders.Insert(0, new QueryStringRequestCultureProvider());
+    options.RequestCultureProviders.Insert(0, new AcceptLanguageHeaderRequestCultureProvider());
   }
 );
 #endregion
@@ -41,6 +45,8 @@ builder.Services.AddHttpClient();
 //LIBRARY IdentityServer
 
 #region IdentityServer
+builder.Services.AddBff();
+
 JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
 builder.Services.AddAuthentication(
@@ -72,20 +78,21 @@ builder.Services.AddAuthentication(
   );
 #endregion
 
+//LIBRARY REFIT and IdentityServer
+builder.Services.AddRefitClient<IWebApi>().ConfigureHttpClient(c => c.BaseAddress = new Uri("https://localhost:5003"))
+  .AddUserAccessTokenHandler();
+
 builder.Services.AddSession();
-builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-  {
+if (!app.Environment.IsDevelopment()){
   app.UseExceptionHandler("/Home/Error");
   // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
   app.UseHsts();
-  }
-else
-  {
+}
+else{
   app.UseDeveloperExceptionPage();
 
   //LIBRARY IdentityServer
@@ -93,7 +100,7 @@ else
 
   //LIBRARY BWASM
   app.UseWebAssemblyDebugging();
-  }
+}
 
 //LIBRARY BWASM
 app.UseBlazorFrameworkFiles();
@@ -109,10 +116,10 @@ app.UseRouting();
 //LIBRARY IdentityServer
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapBffManagementEndpoints();
 
-
-app.UseEndpoints(endpoints => {
-  endpoints.MapControllers().RequireAuthorization();
-}); //LIBRARY IdentityServer - authenticate all requests
-
+app.MapControllerRoute(
+  "default",
+  "{controller=Home}/{action=Index}/{id?}"
+).RequireAuthorization();
 app.Run();

@@ -8,12 +8,21 @@
 
   <ItemGroup>
     <!--Library IdentityServer-->
-    <PackageReference Include="IdentityModel" Version="6.0.0" />
-    <PackageReference Include="IdentityServer4" Version="4.1.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
+    <PackageReference Include="Duende.BFF" Version="1.2.3"/>
+    <PackageReference Include="Duende.BFF.EntityFramework" Version="1.2.3"/>
+    <PackageReference Include="Duende.BFF.Yarp" Version="1.2.3"/>
+    <PackageReference Include="Duende.IdentityServer" Version="6.1.5"/>
+    <PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="6.1.5"/>
+    <PackageReference Include="Duende.IdentityServer.EntityFramework" Version="6.1.5"/>
+    <PackageReference Include="Duende.IdentityServer.EntityFramework.Storage" Version="6.1.5"/>
+    <PackageReference Include="IdentityModel" Version="6.0.0"/>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0"/>
 
     <!--LIBRARY BWASM-->
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.9"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.9"/>
+    <PackageReference Include="Refit" Version="6.3.2"/>
+    <PackageReference Include="Refit.HttpClientFactory" Version="6.3.2"/>
   </ItemGroup>
 
   <!--LIBRARY BWASM-->
@@ -30,7 +39,8 @@
       <Link>README.md</Link>
     </Content>
   </ItemGroup>
+
   <ItemGroup>
-    <Folder Include="Middleware" />
+    <Folder Include="Identity\Storage"/>
   </ItemGroup>
 </Project>

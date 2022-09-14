@@ -1,6 +1,8 @@
 using APIServer.Database;
 using APIServer.Logging.Database;
 using APIServer.Logging.Middleware;
+using FastEndpoints;
+using FastEndpoints.Swagger;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,8 +16,8 @@ builder.Services.AddDbContext<AppDbContext>();
 //LIBRARY Logger
 builder.Services.AddDbContext<LogDbContext>();
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddFastEndpoints();
+builder.Services.AddSwaggerDoc(); //add this
 
 //LIBRARY IdentityServer
 
@@ -47,11 +49,16 @@ builder.Services.AddAuthentication("Bearer")
 
 var app = builder.Build();
 
+//LIBRARY IdentityServer
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseFastEndpoints();
+
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-  //app.UseSwagger();
-  //app.UseSwaggerUI();
+if (app.Environment.IsDevelopment()){
+  app.UseOpenApi();
+  app.UseSwaggerUi3();
 }
 
 app.UseHttpsRedirection();
@@ -59,10 +66,7 @@ app.UseHttpsRedirection();
 //LIBRARY Logger
 app.UseRequestResponseLogging();
 
-//LIBRARY IdentityServer
-app.UseAuthentication();
-app.UseAuthorization();
 
-app.MapControllers(); //.RequireAuthorization();
+app.MapControllers();
 
 app.Run();

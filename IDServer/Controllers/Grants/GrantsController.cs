@@ -5,14 +5,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using IdentityServer4.Events;
-using IdentityServer4.Extensions;
-using IdentityServer4.Services;
-using IdentityServer4.Stores;
+using Duende.IdentityServer.Events;
+using Duende.IdentityServer.Extensions;
+using Duende.IdentityServer.Services;
+using Duende.IdentityServer.Stores;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace IDServer.Controllers.Grants; 
+namespace IDServer.Controllers.Grants;
 
 /// <summary>
 /// This sample controller allows a user to revoke grants given to clients
@@ -20,10 +20,10 @@ namespace IDServer.Controllers.Grants;
 [SecurityHeaders]
 [Authorize]
 public class GrantsController : Controller {
-  private readonly IIdentityServerInteractionService _interaction;
   private readonly IClientStore _clients;
-  private readonly IResourceStore _resources;
   private readonly IEventService _events;
+  private readonly IIdentityServerInteractionService _interaction;
+  private readonly IResourceStore _resources;
 
   public GrantsController(
     IIdentityServerInteractionService interaction,

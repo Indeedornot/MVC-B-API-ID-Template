@@ -1,9 +1,9 @@
 using System;
-using IdentityServer4.Models;
+using Duende.IdentityServer.Models;
 using IDServer.Controllers.Account;
 using Microsoft.AspNetCore.Mvc;
 
-namespace IDServer.Controllers; 
+namespace IDServer.Controllers;
 
 public static class Extensions {
   /// <summary>

@@ -3,8 +3,8 @@
 
 
 using System.Collections.Generic;
-using IdentityServer4;
-using IdentityServer4.Models;
+using Duende.IdentityServer;
+using Duende.IdentityServer.Models;
 
 namespace IDServer;
 
@@ -25,7 +25,7 @@ public static class Config {
       // interactive client using code flow + pkce
       new() {
         ClientId = "MVCID",
-        ClientSecrets = {new Secret("MVCSecret".Sha256() )},
+        ClientSecrets = {new Secret("MVCSecret".Sha256())},
 
         AllowedGrantTypes = GrantTypes.Code,
 
@@ -38,7 +38,7 @@ public static class Config {
         AllowedScopes = new List<string> {
           "MVCScope",
           IdentityServerConstants.StandardScopes.OpenId,
-          IdentityServerConstants.StandardScopes.Profile,
+          IdentityServerConstants.StandardScopes.Profile
         },
         RequirePkce = true,
         AllowPlainTextPkce = false

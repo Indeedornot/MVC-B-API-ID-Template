@@ -3,28 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Duende.IdentityServer;
+using Duende.IdentityServer.Events;
+using Duende.IdentityServer.Services;
+using Duende.IdentityServer.Stores;
+using Duende.IdentityServer.Test;
 using IdentityModel;
-using IdentityServer4;
-using IdentityServer4.Events;
-using IdentityServer4.Services;
-using IdentityServer4.Stores;
-using IdentityServer4.Test;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace IDServer.Controllers.Account; 
+namespace IDServer.Controllers.Account;
 
 [SecurityHeaders]
 [AllowAnonymous]
 public class ExternalController : Controller {
-  private readonly TestUserStore _users;
-  private readonly IIdentityServerInteractionService _interaction;
   private readonly IClientStore _clientStore;
-  private readonly ILogger<ExternalController> _logger;
   private readonly IEventService _events;
+  private readonly IIdentityServerInteractionService _interaction;
+  private readonly ILogger<ExternalController> _logger;
+  private readonly TestUserStore _users;
 
   public ExternalController(
     IIdentityServerInteractionService interaction,

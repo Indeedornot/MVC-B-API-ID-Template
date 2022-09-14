@@ -5,20 +5,20 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Duende.IdentityServer;
+using Duende.IdentityServer.Events;
+using Duende.IdentityServer.Extensions;
+using Duende.IdentityServer.Models;
+using Duende.IdentityServer.Services;
+using Duende.IdentityServer.Stores;
+using Duende.IdentityServer.Test;
 using IdentityModel;
-using IdentityServer4;
-using IdentityServer4.Events;
-using IdentityServer4.Extensions;
-using IdentityServer4.Models;
-using IdentityServer4.Services;
-using IdentityServer4.Stores;
-using IdentityServer4.Test;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace IDServer.Controllers.Account; 
+namespace IDServer.Controllers.Account;
 
 /// <summary>
 /// This sample controller implements a typical login/logout/provision workflow for local and external accounts.
@@ -28,11 +28,11 @@ namespace IDServer.Controllers.Account;
 [SecurityHeaders]
 [AllowAnonymous]
 public class AccountController : Controller {
-  private readonly TestUserStore _users;
-  private readonly IIdentityServerInteractionService _interaction;
   private readonly IClientStore _clientStore;
-  private readonly IAuthenticationSchemeProvider _schemeProvider;
   private readonly IEventService _events;
+  private readonly IIdentityServerInteractionService _interaction;
+  private readonly IAuthenticationSchemeProvider _schemeProvider;
+  private readonly TestUserStore _users;
 
   public AccountController(
     IIdentityServerInteractionService interaction,

@@ -1,6 +1,8 @@
-﻿@using BWASM.Pages
-@using SharedProject.Localization
+﻿@using SharedProject.Localization
+@using BWASM.Pages
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Localization
+@model SharedProject.Models.Api.WeatherEndpoint.WeatherResponse
 
 @inject IStringLocalizer<SharedResource> SharedLocalizer
 
@@ -11,15 +13,13 @@
 <div class="text-center">
     <h1 class="display-4">@SharedLocalizer["Hello"] @GetUsername()</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <component type="typeof(Counter)" render-mode="WebAssemblyPrerendered" />
+    <component type="typeof(Counter)" render-mode="WebAssemblyPrerendered"/>
+    <p>Weather Forecasts: @Model.Forecasts.Count</p>
 </div>
 
 @{
-    string GetUsername()
-    {
-        if (!ViewData.ContainsKey("Username")) { return "Anonymous"; }
-        var username = ViewData["Username"]!.ToString();
-        if (string.IsNullOrEmpty(username)) return "New User";
-        return username;
+    string GetUsername() {
+        string? username = ViewData["Username"]?.ToString();
+        return string.IsNullOrEmpty(username) ? "New User" : username;
     }
 }

@@ -6,27 +6,28 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using IdentityServer4.Configuration;
-using IdentityServer4.Events;
-using IdentityServer4.Extensions;
-using IdentityServer4.Models;
-using IdentityServer4.Services;
-using IdentityServer4.Validation;
+using Duende.IdentityServer;
+using Duende.IdentityServer.Configuration;
+using Duende.IdentityServer.Events;
+using Duende.IdentityServer.Extensions;
+using Duende.IdentityServer.Models;
+using Duende.IdentityServer.Services;
+using Duende.IdentityServer.Validation;
 using IDServer.Controllers.Consent;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace IDServer.Controllers.Device; 
+namespace IDServer.Controllers.Device;
 
 [Authorize]
 [SecurityHeaders]
 public class DeviceController : Controller {
-  private readonly IDeviceFlowInteractionService _interaction;
   private readonly IEventService _events;
-  private readonly IOptions<IdentityServerOptions> _options;
+  private readonly IDeviceFlowInteractionService _interaction;
   private readonly ILogger<DeviceController> _logger;
+  private readonly IOptions<IdentityServerOptions> _options;
 
   public DeviceController(
     IDeviceFlowInteractionService interaction,
@@ -101,7 +102,7 @@ public class DeviceController : Controller {
         if (ConsentOptions.EnableOfflineAccess == false){
           scopes = scopes.Where(
             x =>
-              x != IdentityServer4.IdentityServerConstants.StandardScopes.OfflineAccess
+              x != IdentityServerConstants.StandardScopes.OfflineAccess
           );
         }
 
@@ -195,7 +196,7 @@ public class DeviceController : Controller {
     if (ConsentOptions.EnableOfflineAccess && request.ValidatedResources.Resources.OfflineAccess){
       apiScopes.Add(
         GetOfflineAccessScope(
-          vm.ScopesConsented.Contains(IdentityServer4.IdentityServerConstants.StandardScopes.OfflineAccess) ||
+          vm.ScopesConsented.Contains(IdentityServerConstants.StandardScopes.OfflineAccess) ||
           model == null
         )
       );
@@ -207,7 +208,7 @@ public class DeviceController : Controller {
   }
 
   private ScopeViewModel CreateScopeViewModel(IdentityResource identity, bool check)
-    => new ScopeViewModel {
+    => new() {
       Value = identity.Name,
       DisplayName = identity.DisplayName ?? identity.Name,
       Description = identity.Description,
@@ -217,7 +218,7 @@ public class DeviceController : Controller {
     };
 
   public ScopeViewModel CreateScopeViewModel(ParsedScopeValue parsedScopeValue, ApiScope apiScope, bool check)
-    => new ScopeViewModel {
+    => new() {
       Value = parsedScopeValue.RawValue,
       // todo: use the parsed scope value in the display?
       DisplayName = apiScope.DisplayName ?? apiScope.Name,
@@ -228,8 +229,8 @@ public class DeviceController : Controller {
     };
 
   private ScopeViewModel GetOfflineAccessScope(bool check)
-    => new ScopeViewModel {
-      Value = IdentityServer4.IdentityServerConstants.StandardScopes.OfflineAccess,
+    => new() {
+      Value = IdentityServerConstants.StandardScopes.OfflineAccess,
       DisplayName = ConsentOptions.OfflineAccessDisplayName,
       Description = ConsentOptions.OfflineAccessDescription,
       Emphasize = true,

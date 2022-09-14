@@ -3,20 +3,20 @@
 
 
 using System.Threading.Tasks;
-using IdentityServer4.Services;
+using Duende.IdentityServer.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace IDServer.Controllers.Home; 
+namespace IDServer.Controllers.Home;
 
 [SecurityHeaders]
 [AllowAnonymous]
 public class HomeController : Controller {
-  private readonly IIdentityServerInteractionService _interaction;
   private readonly IWebHostEnvironment _environment;
+  private readonly IIdentityServerInteractionService _interaction;
   private readonly ILogger _logger;
 
   public HomeController(
