@@ -10,63 +10,47 @@ An Asp.Net Core 6.0 Template made for small projects that do not need to be base
 
 - Model-View-Controller Server
 
-    - with Authorization
-    - with Blazor WASM Support
+  - with Authorization
+  - with Blazor WASM Support
 
 - WebApi
 
-    - with Authorization
-    - Typesafe Api and Api Client Library
-    - Request/Response Logging Middleware to SQLLite Database
-    - AppDbContext ready with BaseEntity class with CreatedDate and UpdatedDate support
+  - with Authorization
+  - Request/Response Logging Middleware to SQLLite Database
+  - AppDbContext ready with BaseEntity class with CreatedDate and UpdatedDate support
 
 - Identity Server 4
 
-    - Supporting both Api and MVC Scope Authorization with predefined MVCScope with seamless access to the WebApi
+  - Supporting both Api and MVC Scope Authorization with predefined MVCScope with access to the WebApi
 
 - Blazor WASM Client
-    - Preconnected to the MVC Server for use of components
-    - With Authorization
+  - Preconnected to the MVC Server for use of components
 
 ## To Be Added
 
-### General
-
-- [ ] Clean up the views and implement a better view design to showcase all the features
-- [ ] Move many library dependant functions into their own files with extension methods
-
 ### Server Based
 
-- [ ] Look into Identity Server 4's ability to perform role based authentication based on data stored on it's system and
-  check for outside libraries able to ease its use
+- [ ] Look into Identity Server 4's ability to perform role based authentication based on data stored on it's system and check for outside libraries able to ease its use
 
 ### Api Centered
 
 - [ ] Implement DTO mapper for WebApi
-    - Possible usage of [AutoMapper](https://docs.automapper.org/en/stable/Getting-started.html) with Profile based
-      configuration for ease of use
-- [x] ~~Typesafe Rest Api Client Library~~
-    - ~~Possible usage
-      of [Restless](https://github.com/letsar/RestLess "Compilation Time Generated Rest Api Client Library")~~
-    - Settled on [Refit](https://github.com/reactiveui/refit#using-httpclientfactory)
-      and [FastEndpoints](https://fast-endpoints.com/)
+  - Possible usage of [AutoMapper](https://docs.automapper.org/en/stable/Getting-started.html) with Profile based configuration for ease of use
+- [ ] Typesafe Rest Api Client Library
+  - Possible usage of [Restless](https://github.com/letsar/RestLess "Compilation Time Generated Rest Api Client Library")
 - [x] ~~Check for libraries implementing `Repository<Type id, Type model>` for ease of use of DbContext~~
-    - Not needed due to EFCore implementing Repository pattern - Use Generic Crud methods on DbContext
+  - Not needed due to EFCore implementing Repository pattern - Use Generic Crud methods on DbContext
 - [ ] Look into EFCore DbConnection type for ease of use of DbContext and the ability to implement UnitOfWork pattern
 - [ ] Add easy database manipulation for WebApi databases for testing purposes
-    - Possible usage of [Core-Admin](https://github.com/edandersen/core-admin) Automatic Crud Generation
-        - Need to previously either establish role-based authorization or use `app.Environment.IsDevelopment();`
-    - Created Database recreation script - To Be Extended
-- [ ] Implement Model Validation and implement it in Db manipulation methods or check it using Middleware and block
-  requests with invalid models
-    - Possible usage of [FluentValidation](https://github.com/FluentValidation/FluentValidation). Library that gives the
-      ability to write AbstractValidators for models
+  - Possible usage of [Core-Admin](https://github.com/edandersen/core-admin) Automatic Crud Generation
+    - Need to previously either establish role-based authorization or use `app.Environment.IsDevelopment();`
+  - Created Database recreation script - To Be Extended
+- [ ] Implement Model Validation and implement it in Db manipulation methods or check it using Middleware and block requests with invalid models
+  - Possible usage of [FluentValidation](https://github.com/FluentValidation/FluentValidation). Library that gives the ability to write AbstractValidators for models
 
 ### Separation Needed
 
 - [x] ~~Add Easily Removable Localization~~
-    - ~~Possible usage of built
-      in [Localization](https://www.codemag.com/Article/2009081/A-Deep-Dive-into-ASP.NET-Core-Localization) - Deep Dive
-      into Localization~~
-    - ~~Separation Needed to support both WebApi, MVC and Blazor WASM~~
+  - ~~Possible usage of built in [Localization](https://www.codemag.com/Article/2009081/A-Deep-Dive-into-ASP.NET-Core-Localization) - Deep Dive into Localization~~
+  - ~~Separation Needed to support both WebApi, MVC and Blazor WASM~~
 - [ ] Separate reused models across WebApi and Server into separate project
