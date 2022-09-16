@@ -42,6 +42,21 @@ public static class Config {
         },
         RequirePkce = true,
         AllowPlainTextPkce = false
+      },
+      new() {
+        ClientId = "APISwagger",
+        RequireClientSecret = false,
+        AllowedGrantTypes = GrantTypes.Implicit,
+        RequirePkce = true,
+        RedirectUris = {"https://localhost:5003/swagger/oauth2-redirect.html"},
+        AllowedCorsOrigins = {"https://localhost:5003"},
+        AllowOfflineAccess = true,
+        AllowedScopes = new List<string> {
+          "MVCScope",
+          IdentityServerConstants.StandardScopes.OpenId,
+          IdentityServerConstants.StandardScopes.Profile
+        },
+        AllowAccessTokensViaBrowser = true
       }
     };
 }
