@@ -1,4 +1,4 @@
-﻿using APIServer.Logging.Model;
+﻿using APIServer.Logging.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace APIServer.Logging.Database;
@@ -13,7 +13,7 @@ public class LogDbContext : DbContext {
   public DbSet<Log> Logs { get; set; } = null!;
 
   protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-    var databasePath = Env.ContentRootPath + @"\Logging\Database\LogDatabase.sqlite";
+    string? databasePath = Env.ContentRootPath + @"\Logging\Database\LogDatabase.sqlite";
     optionsBuilder.UseSqlite($"Data Source={databasePath};");
   }
 }

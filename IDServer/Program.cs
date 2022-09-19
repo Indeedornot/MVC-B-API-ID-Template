@@ -1,106 +1,48 @@
-﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
-
-
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+﻿using IDServer.Data;
 using Serilog;
-using Serilog.Events;
-using Serilog.Sinks.SystemConsole.Themes;
-using System;
-using System.IO;
-using System.Security.Cryptography.X509Certificates;
-using IDServer;
-using IDServer.Controllers;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Logging;
-using Microsoft.AspNetCore.Authentication.Certificate;
 
-#region logging
-Log.Logger = new LoggerConfiguration()
-  .MinimumLevel.Debug()
-  .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-  .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
-  .MinimumLevel.Override("System", LogEventLevel.Warning)
-  .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
-  .Enrich.FromLogContext()
-  // uncomment to write to Azure diagnostics stream
-  //.WriteTo.File(
-  //    @"D:\home\LogFiles\Application\identityserver.txt",
-  //    fileSizeLimitBytes: 1_000_000,
-  //    rollOnFileSizeLimit: true,
-  //    shared: true,
-  //    flushToDiskInterval: TimeSpan.FromSeconds(1))
-  .WriteTo.Console(
-    outputTemplate:
-    "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
-    theme: AnsiConsoleTheme.Code
-  )
-  .CreateLogger();
+namespace IDServer;
 
+public static class Program {
+  public static void Main(string[] args) {
+    Log.Logger = new LoggerConfiguration()
+      .WriteTo.Console()
+      .CreateBootstrapLogger();
 
-Log.CloseAndFlush();
-#endregion
+    Log.Information("Starting up");
 
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddControllersWithViews();
-
-builder.Services.AddIdentityServer(
-    options => {
-      options.Events.RaiseErrorEvents = true;
-      options.Events.RaiseInformationEvents = true;
-      options.Events.RaiseFailureEvents = true;
-      options.Events.RaiseSuccessEvents = true;
-
-      // see https://identityserver4.readthedocs.io/en/latest/topics/resources.html
-      options.EmitStaticAudienceClaim = true;
+    try{ CreateApp(args); }
+    catch (Exception ex) when (ex.GetType().Name is not "StopTheHostException") // https://github.com/dotnet/runtime/issues/60600
+    {
+      Log.Fatal(ex, "Unhandled exception");
     }
-  )
-  .AddTestUsers(TestUsers.Users)
-  .AddInMemoryIdentityResources(Config.IdentityResources)
-  .AddInMemoryApiScopes(Config.ApiScopes)
-  .AddInMemoryClients(Config.Clients)
-  // ^ in-memory, code config
-  .AddDeveloperSigningCredential();
-// ^ not recommended for production - you need to store your key material somewhere secure
-
-builder.Services.AddAuthentication()
-  // .AddGoogle(options =>
-  // {
-  //     options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-  //
-  //     // register your IdentityServer with Google at https://console.developers.google.com
-  //     // enable the Google+ API
-  //     // set the redirect URI to https://localhost:5001/signin-google
-  //     options.ClientId = "copy client ID from Google here";
-  //     options.ClientSecret = "copy client secret from Google here";
-  // });
-  .AddCertificate(
-    options => {
-      options.AllowedCertificateTypes = CertificateTypes.All;
-      options.RevocationMode = X509RevocationMode.NoCheck;
+    finally{
+      Log.Information("Shut down complete");
+      Log.CloseAndFlush();
     }
-  );
-
-var app = builder.Build();
-
-if (app.Environment.IsDevelopment()){
-  app.UseDeveloperExceptionPage();
-}
-
-app.UseStaticFiles();
-
-app.UseRouting();
-app.UseIdentityServer();
-app.UseAuthorization();
-app.UseEndpoints(
-  endpoints => {
-    endpoints.MapDefaultControllerRoute()
-      .RequireAuthorization();
   }
-);
 
-app.Run();
+  private static void CreateApp(string[] args) {
+    var builder = WebApplication.CreateBuilder(args);
+
+    builder.Host.UseSerilog((ctx, lc) => lc
+      .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}")
+      .Enrich.FromLogContext()
+      .ReadFrom.Configuration(ctx.Configuration));
+
+    var app = builder
+      .ConfigureServices()
+      .ConfigurePipeline();
+
+    // this seeding is only for the template to bootstrap the DB and users.
+    // in production you will likely want a different approach.
+    if (args.Contains("/seed")){
+      Log.Information("Seeding database...");
+      SeedData.EnsureSeedData(app);
+      Log.Information("Done seeding database. Exiting.");
+      return;
+    }
+
+    app.Run();
+  }
+}

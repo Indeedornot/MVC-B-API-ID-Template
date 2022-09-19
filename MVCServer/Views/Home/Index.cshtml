@@ -1,10 +1,12 @@
-﻿@using SharedProject.Localization
+﻿@model SharedProject.Models.Api.WeatherEndpoint.WeatherResponse
+
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+
+@using SharedProject.Localization
 @using BWASM.Pages
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Localization
-@model SharedProject.Models.Api.WeatherEndpoint.WeatherResponse
-
-@inject IStringLocalizer<SharedResource> SharedLocalizer
+@model SharedProject.Models.Api.WeatherEndpoint.WeatherResponse?
 
 @{
     ViewData["Title"] = "Home Page";
@@ -14,7 +16,14 @@
     <h1 class="display-4">@SharedLocalizer["Hello"] @GetUsername()</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
     <component type="typeof(Counter)" render-mode="WebAssemblyPrerendered"/>
-    <p>Weather Forecasts: @Model.Forecasts.Count</p>
+    <p>Weather Forecasts: @Model?.Forecasts.Count</p>
+
+    <dl>
+        @foreach (var claim in User.Claims){
+            <dt>@claim.Type</dt>
+            <dd>@claim.Value</dd>
+        }
+    </dl>
 </div>
 
 @{

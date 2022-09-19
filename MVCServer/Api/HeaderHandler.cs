@@ -1,0 +1,25 @@
+﻿using System.Diagnostics;
+using IdentityModel.Client;
+
+namespace MVCServer.Api;
+
+public class HeaderHandler : DelegatingHandler {
+  private readonly IHttpContextAccessor _contextAccessor;
+
+  public HeaderHandler(IHttpContextAccessor contextAccessor) {
+    _contextAccessor = contextAccessor;
+  }
+
+  public HeaderHandler(
+    HttpMessageHandler innerHandler,
+    IHttpContextAccessor contextAccessor) : base(innerHandler) {
+    _contextAccessor = contextAccessor;
+  }
+
+  protected async override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) {
+    string token = string.Empty;
+    request.SetBearerToken(token);
+    Debug.Write("Access Token: " + token);
+    return await base.SendAsync(request, cancellationToken);
+  }
+}

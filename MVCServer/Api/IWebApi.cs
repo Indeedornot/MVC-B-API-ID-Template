@@ -6,5 +6,5 @@ namespace MVCServer.Api;
 
 public interface IWebApi {
   [Get(ApiEndpoints.WeatherEndpoint)]
-  Task<WeatherResponse> GetWeatherForecast();
+  Task<WeatherResponse?> GetWeatherForecast();
 }

@@ -1,10 +1,14 @@
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using Duende.IdentityServer;
+using IdentityModel;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Tokens;
 using MVCServer.Api;
 using Refit;
+using SharedProject.IdentityServer;
 using SharedProject.Localization;
 
 namespace MVCServer;
@@ -28,8 +32,16 @@ internal static class Program {
     builder.Services.AddHttpClient();
 
     builder.Services.AddConfiguredIdentityServer();
-    builder.Services.AddRefitClient<IWebApi>().ConfigureHttpClient(c => c.BaseAddress = new Uri("https://localhost:5003"))
-      .AddUserAccessTokenHandler();
+
+    builder.Services.AddHttpContextAccessor();
+
+    //TODO ENSURE USER HAS APISCOPE
+    builder.Services.AddTransient<HeaderHandler>();
+    builder.Services.AddRefitClient<IWebApi>()
+      .ConfigureHttpClient(c => {
+        c.BaseAddress = new Uri(SharedProject.IpAddresses.APIServer);
+        //;c.DefaultRequestHeaders.Add("role", ClaimsPrincipal.Current?.FindFirstValue("role"));
+      }).AddHttpMessageHandler<HeaderHandler>(); //.AddClientAccessTokenHandler("api").AddUserAccessTokenHandler();
 
     builder.Services.AddSession();
 
@@ -59,7 +71,7 @@ internal static class Program {
 
     app.UseAuthentication();
     app.UseAuthorization();
-    app.MapBffManagementEndpoints(); //ID4
+    //app.MapBffManagementEndpoints(); //ID4
 
     app.MapControllerRoute(
       "default",
@@ -69,9 +81,26 @@ internal static class Program {
   }
 
   private static IServiceCollection AddConfiguredIdentityServer(this IServiceCollection services) {
-    services.AddBff();
+    services.AddAccessTokenManagement();
+    //options => {
+    // options.Client.Clients.Add("mvc",
+    //   new ClientCredentialsTokenRequest() {
+    //     Address = "https://localhost:5001/connect/token",
+    //     ClientId = "MVCID",
+    //     ClientSecret = "MVCSecret",
+    //     Scope = SharedProject.IdentityServer.Scopes.ApiScope.Name
+    //   });
+    //   string[] scopes = {Scopes.Roles.Name, Scopes.ApiScope.Name, IdentityServerConstants.StandardScopes.OpenId};
+    //   options.Client.Clients.Add("api",
+    //     new AuthorizationCodeTokenRequest() {
+    //       Address = "https://localhost:5001/connect/token",
+    //       ClientId = "MVCID",
+    //       ClientSecret = "MVCSecret",
+    //       Scope = string.Join(" ", scopes)
+    //     });
+    // });
 
-    JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+    JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
     services.AddAuthentication(
         options => {
@@ -83,7 +112,7 @@ internal static class Program {
       .AddOpenIdConnect(
         "oidc",
         options => {
-          options.Authority = "https://localhost:5001";
+          options.Authority = SharedProject.IpAddresses.IdentityServer;
 
           options.ClientId = "MVCID";
           options.ClientSecret = "MVCSecret";
@@ -91,11 +120,22 @@ internal static class Program {
           options.ResponseMode = "query";
           options.UsePkce = true;
 
-          options.Scope.Add("MVCScope");
+          //TODO: Look into scope based authorization for certain pages
+          options.Scope.Add(Scopes.ApiScope.Name);
           options.Scope.Add(IdentityServerConstants.StandardScopes.OpenId);
           options.Scope.Add(IdentityServerConstants.StandardScopes.Profile);
+          options.GetClaimsFromUserInfoEndpoint = true;
+          options.MapInboundClaims = true;
 
-          options.SignedOutRedirectUri = "https://localhost:5002/signout-callback-oidc";
+          options.Scope.Add(Scopes.Roles.Name);
+          options.ClaimActions.MapUniqueJsonKey(JwtClaimTypes.Role, JwtClaimTypes.Role);
+          options.TokenValidationParameters = new TokenValidationParameters {
+            NameClaimType = JwtClaimTypes.Name,
+            RoleClaimType = JwtClaimTypes.Role
+          };
+          //options.ClaimActions.MapUniqueJsonKey("name", "name");
+
+          options.SignedOutRedirectUri = $"{SharedProject.IpAddresses.MVCServer}/signout-callback-oidc";
 
           options.SaveTokens = true;
         }
