@@ -1,10 +1,7 @@
-﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
-
-
-using System.Collections.Generic;
-using Duende.IdentityServer;
+﻿using Duende.IdentityServer;
 using Duende.IdentityServer.Models;
+using SharedProject;
+using SharedProject.IdentityServer;
 
 namespace IDServer;
 
@@ -12,13 +9,15 @@ public static class Config {
   public static IEnumerable<IdentityResource> IdentityResources =>
     new IdentityResource[] {
       new IdentityResources.OpenId(),
-      new IdentityResources.Profile()
+      new IdentityResources.Profile(),
+      Scopes.Roles
     };
 
   public static IEnumerable<ApiScope> ApiScopes =>
-    new ApiScope[] {
-      new("MVCScope")
-    };
+    new[] {Scopes.ApiScope};
+
+  public static IEnumerable<ApiResource> ApiResources =>
+    new ApiResource[] { };
 
   public static IEnumerable<Client> Clients =>
     new Client[] {
@@ -30,13 +29,14 @@ public static class Config {
         AllowedGrantTypes = GrantTypes.Code,
 
         // where to redirect to after login
-        RedirectUris = {"https://localhost:5002/signin-oidc"},
+        RedirectUris = {$"{IpAddresses.MVCServer}/signin-oidc"},
 
         // where to redirect to after logout
-        PostLogoutRedirectUris = {"https://localhost:5002/signout-callback-oidc"},
+        PostLogoutRedirectUris = {$"{IpAddresses.MVCServer}/signout-callback-oidc"},
 
         AllowedScopes = new List<string> {
-          "MVCScope",
+          Scopes.ApiScope.Name,
+          Scopes.Roles.Name,
           IdentityServerConstants.StandardScopes.OpenId,
           IdentityServerConstants.StandardScopes.Profile
         },
@@ -46,16 +46,39 @@ public static class Config {
       new() {
         ClientId = "APISwagger",
         RequireClientSecret = false,
-        AllowedGrantTypes = GrantTypes.Implicit,
+        AllowedGrantTypes = GrantTypes.ClientCredentials,
         RequirePkce = true,
-        RedirectUris = {"https://localhost:5003/swagger/oauth2-redirect.html"},
-        AllowedCorsOrigins = {"https://localhost:5003"},
+        RedirectUris = {$"{IpAddresses.APIServer}/swagger/oauth2-redirect.html"},
+        AllowedCorsOrigins = {IpAddresses.APIServer},
         AllowOfflineAccess = true,
         AllowedScopes = new List<string> {
-          "MVCScope",
+          Scopes.ApiScope.Name,
+          Scopes.Roles.Name,
           IdentityServerConstants.StandardScopes.OpenId,
           IdentityServerConstants.StandardScopes.Profile
         },
+        AllowAccessTokensViaBrowser = true
+      },
+      new() {
+        ClientId = "POSTMAN",
+        ClientSecrets = {new Secret("POSTMAN".Sha256())},
+
+        AllowedGrantTypes = GrantTypes.Code,
+
+        // where to redirect to after login
+        RedirectUris = {"https://oauth.pstmn.io/v1/browser-callback"},
+
+        // where to redirect to after logout
+        PostLogoutRedirectUris = {$"{IpAddresses.MVCServer}/signout-callback-oidc"},
+
+        AllowedScopes = new List<string> {
+          Scopes.ApiScope.Name,
+          Scopes.Roles.Name,
+          IdentityServerConstants.StandardScopes.OpenId,
+          IdentityServerConstants.StandardScopes.Profile
+        },
+        RequirePkce = false,
+        AllowPlainTextPkce = false,
         AllowAccessTokensViaBrowser = true
       }
     };

@@ -1,7 +1,10 @@
 ﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MVCServer.Api;
 using MVCServer.Models;
+using SharedProject.IdentityServer;
+using SharedProject.Models.Api.WeatherEndpoint;
 
 namespace MVCServer.Controllers;
 
@@ -13,23 +16,18 @@ public class HomeController : Controller {
   }
 
   public async Task<IActionResult> Index() {
-    //ViewData["Username"] = ProfileService.GetProfileDataAsync(new()).Result.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
-    // }
-    //   var y = response.Claims.ToDictionary(c => c.Type, c => c.Value);
-    //   });
-    //     Token = token
-    //     Address = "https://localhost:5001/connect/userinfo",
-    //   var response = await client.GetUserInfoAsync(new UserInfoRequest {
-    //   var client = new HttpClient();
-    //   var token = await context.GetTokenAsync(CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectParameterNames.AccessToken);
-    //   var x = User.Claims.ToDictionary(c => c.Type, c => c.Value);
-    // {
-    // if (User?.Identity?.IsAuthenticated is true)
-    //HttpContext context
-    var weather = await _webApi.GetWeatherForecast();
+    WeatherResponse? weather = null;
+    try{
+      weather = await _webApi.GetWeatherForecast();
+    }
+    catch (Exception e){
+      Console.WriteLine(e);
+    }
+
     return this.View(weather);
   }
 
+  [Authorize(Roles = Roles.Admin)]
   public IActionResult Privacy() {
     return this.View();
   }

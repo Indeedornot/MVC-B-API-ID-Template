@@ -1,6 +1,7 @@
 using APIServer.Database;
 using APIServer.Logging.Database;
 using APIServer.Logging.Middleware;
+using Duende.IdentityServer;
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using Microsoft.IdentityModel.Tokens;
@@ -23,17 +24,20 @@ builder.Services.AddDbContext<LogDbContext>();
 
 builder.Services.AddAuthorization(options => {
   options.AddPolicy(
-    "ApiScope",
+    SharedProject.IdentityServer.Scopes.ApiScope.Name,
     policy => {
       policy.RequireAuthenticatedUser();
-      policy.RequireClaim("scope", "MVCScope");
+      //policy.RequireClaim(JwtClaimTypes.Scope, SharedProject.IdentityServer.Scopes.ApiScope.Name);
+      // policy.RequireAssertion(context => {
+      //   return context.User.HasClaim(JwtClaimTypes.Scope, SharedProject.IdentityServer.Scopes.ApiScope.Name);
+      // });
     }
   );
 });
 builder.Services.AddAuthentication("Bearer")
   .AddJwtBearer("Bearer",
     options => {
-      options.Authority = "https://localhost:5001";
+      options.Authority = SharedProject.IpAddresses.IdentityServer;
       options.TokenValidationParameters = new TokenValidationParameters {
         ValidateAudience = false
       };
@@ -50,10 +54,12 @@ builder.Services.AddSwaggerDoc(
         Flow = OpenApiOAuth2Flow.Implicit,
         Flows = new OpenApiOAuthFlows {
           Implicit = new OpenApiOAuthFlow {
-            AuthorizationUrl = "https://localhost:5001/connect/authorize",
-            TokenUrl = "https://localhost:5001/connect/token",
+            AuthorizationUrl = $"{SharedProject.IpAddresses.IdentityServer}/connect/authorize",
+            TokenUrl = $"{SharedProject.IpAddresses.IdentityServer}/connect/token",
             Scopes = new Dictionary<string, string> {
-              {"MVCScope", "MVCScope"}
+              {SharedProject.IdentityServer.Scopes.ApiScope.Name, SharedProject.IdentityServer.Scopes.ApiScope.DisplayName},
+              {IdentityServerConstants.StandardScopes.OpenId, IdentityServerConstants.StandardScopes.OpenId},
+              {SharedProject.IdentityServer.Scopes.Roles.Name, SharedProject.IdentityServer.Scopes.Roles.DisplayName}
             }
           }
         }
@@ -66,16 +72,18 @@ builder.Services.AddSwaggerDoc(
 
 var app = builder.Build();
 
+app.UseRequestResponseLogging();
+
 //LIBRARY IdentityServer
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseFastEndpoints();
 
 app.UseHttpsRedirection();
 
 //LIBRARY Logger
-app.UseRequestResponseLogging();
+
+app.UseFastEndpoints();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()){
@@ -87,7 +95,8 @@ if (app.Environment.IsDevelopment()){
       UsePkceWithAuthorizationCodeGrant = true
     };
   });
-  app.MapControllers();
 }
+
+app.MapControllers();
 
 app.Run();

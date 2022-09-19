@@ -1,6 +1,6 @@
-﻿{
+{
   "profiles": {
-    "IDServer": {
+    "SelfHost": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

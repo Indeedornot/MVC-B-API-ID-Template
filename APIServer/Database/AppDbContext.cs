@@ -1,4 +1,4 @@
-﻿using APIServer.Logging.Model;
+﻿using APIServer.Logging.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace APIServer.Database;
