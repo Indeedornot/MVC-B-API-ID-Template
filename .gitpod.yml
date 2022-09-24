@@ -1,7 +1,7 @@
 # Commands to start on workspace startup
 tasks:
-  - init: yarn install
-    command: yarn build
+  - init: dotnet restore
+    command: dotnet build
 # Ports to expose on workspace startup
 ports:
   - port: 8000
