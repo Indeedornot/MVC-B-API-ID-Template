@@ -1,0 +1,70 @@
+﻿.faq {
+  /* Colors */
+  $black: rgba(23, 15, 73, 1);
+  $purple: rgba(111, 108, 144, 1);
+  $shadow-color: rgba(8, 15, 52, 0.06);
+  $white: rgba(255, 255, 255, 1);
+
+  $shadow: 0 5px 16px 0 var($shadow-color);
+
+  /* Typographies */
+  /* Description */
+  $desc-family: "DM Sans";
+  $desc-size: 22px;
+  $desc-weight: 500;
+  $desc-line-height: 28px;
+  /* Header */
+  $header-family: "DM Sans";
+  $header-size: 18px;
+  $header-weight: 400;
+  $header-line-height: 30px;
+
+  background-color: $purple;
+  border-radius: 18px;
+  box-shadow: $shadow;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+
+  &.closed {
+    padding: 39px;
+  }
+
+  &.open {
+    padding: 33px 39px;
+
+    .desc {
+      margin-top: 10px;
+      color: $purple;
+      align-self: stretch;
+      font-family: $header-family;
+      font-size: $header-size;
+      font-weight: $header-weight;
+      line-height: $header-line-height;
+      word-break: break-all;
+    }
+  }
+
+
+  .header {
+    display: flex;
+    align-items: center;
+    align-self: stretch;
+  }
+
+  .header-text {
+    color: $black;
+    flex: 1;
+    margin-right: 11px;
+    font-family: $desc-family;
+    font-size: $desc-size;
+    font-weight: $desc-weight;
+    line-height: $desc-line-height;
+  }
+
+  .button {
+    width: 52px;
+    height: 50px;
+  }
+}

@@ -46,8 +46,7 @@ public static class Config {
       new() {
         ClientId = "APISwagger",
         RequireClientSecret = false,
-        AllowedGrantTypes = GrantTypes.ClientCredentials,
-        RequirePkce = true,
+        AllowedGrantTypes = GrantTypes.Code,
         RedirectUris = {$"{IpAddresses.APIServer}/swagger/oauth2-redirect.html"},
         AllowedCorsOrigins = {IpAddresses.APIServer},
         AllowOfflineAccess = true,

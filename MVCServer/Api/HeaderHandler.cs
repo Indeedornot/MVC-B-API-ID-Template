@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using IdentityModel.Client;
+using Microsoft.AspNetCore.Authentication;
 
 namespace MVCServer.Api;
 
@@ -17,7 +18,7 @@ public class HeaderHandler : DelegatingHandler {
   }
 
   protected async override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) {
-    string token = string.Empty;
+    string? token = await _contextAccessor.HttpContext!.GetTokenAsync("access_token");
     request.SetBearerToken(token);
     Debug.Write("Access Token: " + token);
     return await base.SendAsync(request, cancellationToken);

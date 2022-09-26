@@ -27,4 +27,10 @@
     <ItemGroup>
         <Folder Include="Data\Migrations"/>
     </ItemGroup>
+
+    <ItemGroup>
+        <_ContentIncludedByDefault Remove="Pages\Internal\Token\Index.cshtml"/>
+        <_ContentIncludedByDefault Remove="Pages\Account\Register\Register.cshtml"/>
+        <_ContentIncludedByDefault Remove="Pages\Account\Register\RegistrationSuccesss.cshtml"/>
+    </ItemGroup>
 </Project>

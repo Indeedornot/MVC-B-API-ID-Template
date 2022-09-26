@@ -4,6 +4,7 @@ using APIServer.Logging.Middleware;
 using Duende.IdentityServer;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using IdentityModel;
 using Microsoft.IdentityModel.Tokens;
 using NSwag;
 using NSwag.AspNetCore;
@@ -22,18 +23,26 @@ builder.Services.AddDbContext<LogDbContext>();
 
 //LIBRARY IdentityServer
 
+//Require certain token
 builder.Services.AddAuthorization(options => {
   options.AddPolicy(
     SharedProject.IdentityServer.Scopes.ApiScope.Name,
     policy => {
       policy.RequireAuthenticatedUser();
-      //policy.RequireClaim(JwtClaimTypes.Scope, SharedProject.IdentityServer.Scopes.ApiScope.Name);
-      // policy.RequireAssertion(context => {
-      //   return context.User.HasClaim(JwtClaimTypes.Scope, SharedProject.IdentityServer.Scopes.ApiScope.Name);
-      // });
+      policy.RequireAssertion(context => {
+        string DictToString(Dictionary<string, string> dict) {
+          return string.Join(Environment.NewLine, dict.Select(x => $"{x.Key}: {x.Value}"));
+        }
+
+        Console.WriteLine(DictToString(context.User.Claims.ToDictionary(x => x.Type, x => x.Value)));
+        return context.User.HasClaim(JwtClaimTypes.Scope, SharedProject.IdentityServer.Scopes.ApiScope.Name)
+               && context.User.HasClaim(JwtClaimTypes.Role, SharedProject.IdentityServer.Roles.Admin);
+      });
     }
   );
 });
+
+//Require any token from IdentityServer
 builder.Services.AddAuthentication("Bearer")
   .AddJwtBearer("Bearer",
     options => {
@@ -44,16 +53,18 @@ builder.Services.AddAuthentication("Bearer")
     });
 
 builder.Services.AddFastEndpoints();
+
+//Add new auth option to the list
 builder.Services.AddSwaggerDoc(
   s => {
     s.AddSecurity(
-      "bearer",
+      "Authorization",
       Enumerable.Empty<string>(),
       new OpenApiSecurityScheme {
         Type = OpenApiSecuritySchemeType.OAuth2,
-        Flow = OpenApiOAuth2Flow.Implicit,
+        Flow = OpenApiOAuth2Flow.AccessCode,
         Flows = new OpenApiOAuthFlows {
-          Implicit = new OpenApiOAuthFlow {
+          AuthorizationCode = new OpenApiOAuthFlow {
             AuthorizationUrl = $"{SharedProject.IpAddresses.IdentityServer}/connect/authorize",
             TokenUrl = $"{SharedProject.IpAddresses.IdentityServer}/connect/token",
             Scopes = new Dictionary<string, string> {
@@ -66,24 +77,31 @@ builder.Services.AddSwaggerDoc(
       }
     );
 
-    s.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("bearer"));
+    s.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("Authorization"));
   }
 );
+
+builder.Services.AddCoreAdmin("Admin");
+
 
 var app = builder.Build();
 
 app.UseRequestResponseLogging();
 
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+//LIBRARY Logger
+
+app.UseRouting();
+
 //LIBRARY IdentityServer
 app.UseAuthentication();
 app.UseAuthorization();
 
-
-app.UseHttpsRedirection();
-
-//LIBRARY Logger
-
 app.UseFastEndpoints();
+
+//app.UseCoreAdminCustomUrl("AdminPanel");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()){
@@ -97,6 +115,9 @@ if (app.Environment.IsDevelopment()){
   });
 }
 
-app.MapControllers();
+app.MapControllerRoute(
+  "default",
+  "{controller=Home}/{action=Index}/{id?}"
+).RequireAuthorization(SharedProject.IdentityServer.Scopes.ApiScope.Name);
 
 app.Run();

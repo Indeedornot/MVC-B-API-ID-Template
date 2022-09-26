@@ -1,0 +1,54 @@
+﻿@page "/faq"
+
+<link href="BWASM.styles.css" rel="stylesheet"/>
+
+<PageTitle>Weather forecast</PageTitle>
+
+@if (!open){
+    <div class="faq closed">
+        <div class="header">
+            <span class="header-text">
+                @headerText
+            </span>
+            <img
+                alt=""
+                class="button"
+                src="https://static.overlay-tech.com/assets/2efb0012-ec62-4b70-8f98-2e9ef458122e.png"
+                @onclick="ToggleOpen"/>
+        </div>
+    </div>
+}
+else{
+    <div class="faq open">
+        <div class="header">
+            <span class="header-text">
+                @headerText
+            </span>
+            <img
+                alt=""
+                class="button"
+                src="https://static.overlay-tech.com/assets/3e1eb202-c67d-49da-956c-a9b967a4d8ab.png"
+                @onclick="ToggleOpen"/>
+        </div>
+        <span class="desc">
+            @desc
+        </span>
+    </div>
+}
+
+@code {
+    private bool open = false;
+
+    [Parameter]
+    public string headerText { get; set; } = new("What is Webflow and why is it the best website builder?");
+
+    [Parameter]
+    public string desc { get; set; } = new("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut " +
+                                           "labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco " +
+                                           "laboris nisi ut aliquip ex ea commodo consequat.");
+
+    private void ToggleOpen() {
+        open = !open;
+    }
+
+}

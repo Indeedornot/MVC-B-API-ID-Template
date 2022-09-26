@@ -1,0 +1,54 @@
+.faq {
+    /* Colors */
+    /* Typographies */
+    /* Description */
+    /* Header */
+    background-color: rgb(111, 108, 144);
+    border-radius: 18px;
+    box-shadow: 0 5px 16px 0 var(rgba(8, 15, 52, 0.06));
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.faq.closed {
+    padding: 39px;
+}
+
+.faq.open {
+    padding: 33px 39px;
+}
+
+.faq.open .desc {
+    margin-top: 10px;
+    color: rgb(111, 108, 144);
+    align-self: stretch;
+    font-family: "DM Sans";
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 30px;
+    word-break: break-all;
+}
+
+.faq .header {
+    display: flex;
+    align-items: center;
+    align-self: stretch;
+}
+
+.faq .header-text {
+    color: rgb(23, 15, 73);
+    flex: 1;
+    margin-right: 11px;
+    font-family: "DM Sans";
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 28px;
+}
+
+.faq .button {
+    width: 52px;
+    height: 50px;
+}
+
+/*# sourceMappingURL=Faq.razor.css.map */

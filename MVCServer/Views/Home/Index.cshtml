@@ -1,7 +1,4 @@
-﻿@model SharedProject.Models.Api.WeatherEndpoint.WeatherResponse
-
-@inject IStringLocalizer<SharedResource> SharedLocalizer
-
+﻿@inject IStringLocalizer<SharedResource> SharedLocalizer
 @using SharedProject.Localization
 @using BWASM.Pages
 @using Microsoft.AspNetCore.Mvc.TagHelpers
@@ -17,16 +14,49 @@
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
     <component type="typeof(Counter)" render-mode="WebAssemblyPrerendered"/>
     <p>Weather Forecasts: @Model?.Forecasts.Count</p>
-
-    <dl>
-        @foreach (var claim in User.Claims){
-            <dt>@claim.Type</dt>
-            <dd>@claim.Value</dd>
-        }
-    </dl>
+    <component type="typeof(Faq)" render-mode="WebAssemblyPrerendered" param-headerText="@("All claims")" param-desc="@DictToString(AllClaims())"/>
+    <component type="typeof(Faq)" render-mode="WebAssemblyPrerendered" param-headerText="@("User Claims")" param-desc="@DictToString(UserClaims())"/>
+    <component type="typeof(Faq)" render-mode="WebAssemblyPrerendered" param-headerText="@("Token Claims")" param-desc="@DictToString(TokenClaims())"/>
 </div>
 
 @{
+    Dictionary<string, string> UserClaims() {
+        return User.Claims.Where(x => new List<string>() {
+            "sub",
+            "name",
+            "given_name",
+            "family_name",
+            "email",
+            "email_verified",
+            "preferred_username",
+            "role"
+        }.Contains(x.Type)).ToDictionary(c
+            => c.Type, c => c.Value);
+    }
+
+
+    Dictionary<string, string> TokenClaims() {
+        return User.Claims.Where(x =>
+            new List<string> {
+                "iss",
+                "aud",
+                "exp",
+                "nbf",
+                "iat",
+                "jti",
+                "amr",
+                "auth_time"
+            }.Contains(x.Type)).ToDictionary(c => c.Type, c => c.Value);
+    }
+
+    Dictionary<string, string> AllClaims() {
+        return User.Claims.ToDictionary(c => c.Type, c => c.Value);
+    }
+
+    string DictToString(Dictionary<string, string> dict) {
+        return string.Join(Environment.NewLine, dict.Select(x => $"{x.Key}: {x.Value}"));
+    }
+
     string GetUsername() {
         string? username = ViewData["Username"]?.ToString();
         return string.IsNullOrEmpty(username) ? "New User" : username;

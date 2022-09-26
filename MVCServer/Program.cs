@@ -40,8 +40,7 @@ internal static class Program {
     builder.Services.AddRefitClient<IWebApi>()
       .ConfigureHttpClient(c => {
         c.BaseAddress = new Uri(SharedProject.IpAddresses.APIServer);
-        //;c.DefaultRequestHeaders.Add("role", ClaimsPrincipal.Current?.FindFirstValue("role"));
-      }).AddHttpMessageHandler<HeaderHandler>(); //.AddClientAccessTokenHandler("api").AddUserAccessTokenHandler();
+      }).AddHttpMessageHandler<HeaderHandler>();
 
     builder.Services.AddSession();
 
@@ -60,11 +59,11 @@ internal static class Program {
       IdentityModelEventSource.ShowPII = true;
     }
 
-    app.UseBlazorFrameworkFiles(); // Blazor
 
     app.UseRequestLocalization(); //Localization
 
     app.UseHttpsRedirection();
+    app.UseBlazorFrameworkFiles(); // Blazor
     app.UseStaticFiles();
 
     app.UseRouting();
@@ -73,32 +72,19 @@ internal static class Program {
     app.UseAuthorization();
     //app.MapBffManagementEndpoints(); //ID4
 
-    app.MapControllerRoute(
-      "default",
-      "{controller=Home}/{action=Index}/{id?}"
-    ).RequireAuthorization();
+    app.UseEndpoints(endpoints => {
+      app.MapControllerRoute(
+        "default",
+        "{controller=Home}/{action=Index}/{id?}"
+      ).RequireAuthorization();
+      endpoints.MapFallbackToFile("index.html");
+    });
+
     return app;
   }
 
   private static IServiceCollection AddConfiguredIdentityServer(this IServiceCollection services) {
     services.AddAccessTokenManagement();
-    //options => {
-    // options.Client.Clients.Add("mvc",
-    //   new ClientCredentialsTokenRequest() {
-    //     Address = "https://localhost:5001/connect/token",
-    //     ClientId = "MVCID",
-    //     ClientSecret = "MVCSecret",
-    //     Scope = SharedProject.IdentityServer.Scopes.ApiScope.Name
-    //   });
-    //   string[] scopes = {Scopes.Roles.Name, Scopes.ApiScope.Name, IdentityServerConstants.StandardScopes.OpenId};
-    //   options.Client.Clients.Add("api",
-    //     new AuthorizationCodeTokenRequest() {
-    //       Address = "https://localhost:5001/connect/token",
-    //       ClientId = "MVCID",
-    //       ClientSecret = "MVCSecret",
-    //       Scope = string.Join(" ", scopes)
-    //     });
-    // });
 
     JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
@@ -133,7 +119,6 @@ internal static class Program {
             NameClaimType = JwtClaimTypes.Name,
             RoleClaimType = JwtClaimTypes.Role
           };
-          //options.ClaimActions.MapUniqueJsonKey("name", "name");
 
           options.SignedOutRedirectUri = $"{SharedProject.IpAddresses.MVCServer}/signout-callback-oidc";
 

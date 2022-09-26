@@ -32,8 +32,7 @@ internal static class Startup {
       .AddInMemoryApiScopes(Config.ApiScopes)
       .AddInMemoryClients(Config.Clients)
       .AddInMemoryApiResources(Config.ApiResources)
-      .AddAspNetIdentity<ApplicationUser>()
-      .AddProfileService<IdentityProfileService>();
+      .AddAspNetIdentity<ApplicationUser>();
 
     builder.Services.AddAuthentication();
     // .AddGoogle(options =>
